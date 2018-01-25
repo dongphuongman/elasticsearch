@@ -224,10 +224,12 @@ final class Bootstrap {
         }
 
         // install SM after natives, shutdown hooks, etc.
-        try {
-            Security.configure(environment, BootstrapSettings.SECURITY_FILTER_BAD_DEFAULTS_SETTING.get(settings));
-        } catch (IOException | NoSuchAlgorithmException e) {
-            throw new BootstrapException(e);
+        if (!Elasticsearch.isSecurityManagerDisabled()) {
+            try {
+                Security.configure(environment, BootstrapSettings.SECURITY_FILTER_BAD_DEFAULTS_SETTING.get(settings));
+            } catch (IOException | NoSuchAlgorithmException e) {
+                throw new BootstrapException(e);
+            }
         }
 
         node = new Node(environment) {
